@@ -1,0 +1,80 @@
+plugins {
+    id 'java-library'
+//    id 'java'
+    id 'maven-publish'
+//    id 'jvm-test-suite'
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        url = uri('https://repo.maven.apache.org/maven2/')
+    }
+}
+
+dependencies {
+    api 'com.squareup.okhttp3:okhttp:3.14.9'
+    api 'org.apache.commons:commons-lang3:3.10'
+    api 'commons-io:commons-io:2.7'
+    api 'org.apache.commons:commons-csv:1.10.0'
+    api 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
+    api 'javax.validation:validation-api:2.0.1.Final'
+    api 'org.hibernate.validator:hibernate-validator:6.1.5.Final'
+    api 'org.hibernate.validator:hibernate-validator-annotation-processor:6.1.4.Final'
+    api 'javax.el:javax.el-api:3.0.0'
+    api 'org.glassfish.web:javax.el:2.2.6'
+    api 'org.slf4j:slf4j-api:1.7.30'
+
+    testImplementation 'junit:junit:4.13.1'
+    testImplementation 'org.assertj:assertj-core:3.15.0'
+    testImplementation 'ch.qos.logback:logback-classic:1.2.9'
+}
+
+group = 'com.studerw.tda'
+version = '2.4.2-TBM'
+description = 'td-ameritrade-client'
+java.sourceCompatibility = JavaVersion.VERSION_17
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from(components.java)
+        }
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+tasks.withType(Javadoc) {
+    options.encoding = 'UTF-8'
+}
+
+testing {
+    suites {
+        test {
+            useJUnitJupiter()
+        }
+
+        integrationTest(JvmTestSuite) {
+            dependencies {
+                implementation project()
+            }
+
+//            targets {
+//                all {
+//                    testTask.configure {
+//                        shouldRunAfter(test)
+//                    }
+//                }
+//            }
+            testType = TestSuiteType.INTEGRATION_TEST
+        }
+    }
+}

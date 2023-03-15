@@ -14,8 +14,8 @@ public class StreamingTestIT extends BaseTestIT {
 
   @Test
   public void testStreaming() {
-    final UserPrincipals userPrincipals = httpTdaClient.getUserPrincipals();
-    assertThat(userPrincipals).isNotNull();
+    final UserPrincipals userPrincipals = BaseTestIT.httpTdaClient.getUserPrincipals();
+    Assertions.assertThat(userPrincipals).isNotNull();
     LOGGER.debug("{}", userPrincipals);
   }
 }

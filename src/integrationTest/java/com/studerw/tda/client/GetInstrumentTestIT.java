@@ -26,8 +26,8 @@ public class GetInstrumentTestIT extends BaseTestIT {
   @Test
   public void testEquityInstrument() {
     Instrument instrument = httpTdaClient.getInstrumentByCUSIP("594918104");
-    assertThat(instrument.getAssetType()).isEqualTo(AssetType.EQUITY);
-    assertThat(instrument.getSymbol()).isEqualToIgnoringCase("MSFT");
+    Assertions.assertThat(instrument.getAssetType()).isEqualTo(AssetType.EQUITY);
+    Assertions.assertThat(instrument.getSymbol()).isEqualToIgnoringCase("MSFT");
     LOGGER.debug("{}",instrument);
 
 //    assertThat(quote.getAssetType()).isEqualTo(AssetType.EQUITY);
@@ -65,8 +65,8 @@ public class GetInstrumentTestIT extends BaseTestIT {
     List<String> mfs = Arrays.asList("922908728", "922908728");
     mfs.forEach(symbol -> {
       Instrument instrument = httpTdaClient.getInstrumentByCUSIP(symbol);
-      assertThat(instrument.getBondPrice()).isNull();
-      assertThat(instrument.getAssetType()).isEqualTo(AssetType.MUTUAL_FUND);
+      Assertions.assertThat(instrument.getBondPrice()).isNull();
+      Assertions.assertThat(instrument.getAssetType()).isEqualTo(AssetType.MUTUAL_FUND);
       LOGGER.debug("{}",instrument);
     });
   }
@@ -76,8 +76,8 @@ public class GetInstrumentTestIT extends BaseTestIT {
     List<String> cusips =  Arrays.asList("06747PQK8", "88241THD5", "38149MUF8", "29260MBF1");
     cusips.forEach(cusip -> {
       Instrument instrument = httpTdaClient.getBond(cusip);
-      assertThat(instrument.getAssetType()).isEqualTo(AssetType.BOND);
-      assertThat(instrument.getBondPrice()).isNotNull();
+      Assertions.assertThat(instrument.getAssetType()).isEqualTo(AssetType.BOND);
+      Assertions.assertThat(instrument.getBondPrice()).isNotNull();
       LOGGER.debug("{}",instrument);
     });
   }
@@ -95,42 +95,42 @@ public class GetInstrumentTestIT extends BaseTestIT {
   @Test(expected = IllegalArgumentException.class)
   public void testBadQuery(){
     httpTdaClient.queryInstruments(new Query(null, null));
-    fail("Should not have got here");
+    Assert.fail("Should not have got here");
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testBadQuery2(){
     httpTdaClient.queryInstruments(new Query("", QueryType.SYMBOL_REGEX));
-    fail("Should not have got here");
+    Assert.fail("Should not have got here");
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testBadQuery3(){
     httpTdaClient.queryInstruments(new Query("foo", null));
-    fail("Should not have got here");
+    Assert.fail("Should not have got here");
   }
 
   @Test
   public void testFundamentalData() {
 
     final FullInstrument instrument = httpTdaClient.getFundamentalData("msft");
-    assertThat(instrument.getAssetType()).isEqualTo(AssetType.EQUITY);
-    assertThat(instrument.getSymbol()).isEqualTo("MSFT");
-    assertThat(instrument.getExchange()).isEqualTo("NASDAQ");
+    Assertions.assertThat(instrument.getAssetType()).isEqualTo(AssetType.EQUITY);
+    Assertions.assertThat(instrument.getSymbol()).isEqualTo("MSFT");
+    Assertions.assertThat(instrument.getExchange()).isEqualTo("NASDAQ");
     Fundamental fundamental = instrument.getFundamental();
-    assertThat(fundamental).isNotNull();
-    assertThat(fundamental.getMarketCapFloat()).isGreaterThan(new BigDecimal("1"));
-    assertThat(fundamental.getDividendDate()).isNotEmpty();
+    Assertions.assertThat(fundamental).isNotNull();
+    Assertions.assertThat(fundamental.getMarketCapFloat()).isGreaterThan(new BigDecimal("1"));
+    Assertions.assertThat(fundamental.getDividendDate()).isNotEmpty();
     LOGGER.debug(instrument.toString());
   }
 
   @Test
   public void testFundamentalData2(){
     final FullInstrument instrument = httpTdaClient.getFundamentalData("594918104");
-    assertThat(instrument.getAssetType()).isEqualTo(AssetType.EQUITY);
-    assertThat(instrument.getCusip()).isEqualTo("594918104");
+    Assertions.assertThat(instrument.getAssetType()).isEqualTo(AssetType.EQUITY);
+    Assertions.assertThat(instrument.getCusip()).isEqualTo("594918104");
     Fundamental fundamental = instrument.getFundamental();
-    assertThat(fundamental).isNotNull();
+    Assertions.assertThat(fundamental).isNotNull();
     LOGGER.debug(instrument.toString());
   }
 
@@ -138,7 +138,7 @@ public class GetInstrumentTestIT extends BaseTestIT {
   public void testQuerySymbol(){
     Query query = new Query("msft.*", QueryType.SYMBOL_REGEX);
     final List<Instrument> instruments = httpTdaClient.queryInstruments(query);
-    assertThat(instruments).size().isGreaterThan(0);
+    Assertions.assertThat(instruments).size().isGreaterThan(0);
     LOGGER.debug("{}", instruments);
   }
 
@@ -150,7 +150,7 @@ public class GetInstrumentTestIT extends BaseTestIT {
   public void testQueryAllSymbols(){
     Query query = new Query(".*", QueryType.SYMBOL_REGEX);
     final List<Instrument> instruments = httpTdaClient.queryInstruments(query);
-    assertThat(instruments).size().isGreaterThan(0);
+    Assertions.assertThat(instruments).size().isGreaterThan(0);
     LOGGER.debug("Size: {}", instruments.size());
     LOGGER.debug("{}", instruments);
   }
@@ -159,7 +159,7 @@ public class GetInstrumentTestIT extends BaseTestIT {
   public void testQueryDescription(){
     Query query = new Query("Microsoft.*", QueryType.DESCRIPTION_REGEX);
     final List<Instrument> instruments = httpTdaClient.queryInstruments(query);
-    assertThat(instruments).size().isGreaterThan(0);
+    Assertions.assertThat(instruments).size().isGreaterThan(0);
     LOGGER.debug("Size: {}", instruments.size());
     LOGGER.debug("{}", instruments);
   }
@@ -168,7 +168,7 @@ public class GetInstrumentTestIT extends BaseTestIT {
   public void testQueryDescription2(){
     Query query = new Query("Microsoft", QueryType.DESCRIPTION_SEARCH);
     final List<Instrument> instruments = httpTdaClient.queryInstruments(query);
-    assertThat(instruments).size().isGreaterThan(0);
+    Assertions.assertThat(instruments).size().isGreaterThan(0);
     LOGGER.debug("Size: {}", instruments.size());
     LOGGER.debug("{}", instruments);
   }
@@ -177,7 +177,7 @@ public class GetInstrumentTestIT extends BaseTestIT {
   public void testQueryDescription3(){
     Query query = new Query("bank", QueryType.DESCRIPTION_SEARCH);
     final List<Instrument> instruments = httpTdaClient.queryInstruments(query);
-    assertThat(instruments).size().isGreaterThan(0);
+    Assertions.assertThat(instruments).size().isGreaterThan(0);
     LOGGER.debug("Size: {}", instruments.size());
     LOGGER.debug("{}", instruments);
   }

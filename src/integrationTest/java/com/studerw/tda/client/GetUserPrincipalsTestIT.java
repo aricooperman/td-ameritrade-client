@@ -17,20 +17,20 @@ public class GetUserPrincipalsTestIT extends BaseTestIT {
   @Test
   public void testGetUserPrincipals() {
     final UserPrincipals userPrincipals = httpTdaClient.getUserPrincipals();
-    assertThat(userPrincipals).isNotNull();
+    Assertions.assertThat(userPrincipals).isNotNull();
     LOGGER.debug("{}", userPrincipals);
   }
 
   @Test
   public void testGetUserPrincipalsPrefs() {
     final UserPrincipals userPrincipals = httpTdaClient.getUserPrincipals(Field.preferences);
-    assertThat(userPrincipals).isNotNull();
-    assertThat(userPrincipals.getStreamerSubscriptionKeys()).isNull();
-    assertThat(userPrincipals.getStreamerInfo()).isNull();
-    assertThat(userPrincipals.getAccounts().get(0).getPreferences()).isNotNull();
+    Assertions.assertThat(userPrincipals).isNotNull();
+    Assertions.assertThat(userPrincipals.getStreamerSubscriptionKeys()).isNull();
+    Assertions.assertThat(userPrincipals.getStreamerInfo()).isNull();
+    Assertions.assertThat(userPrincipals.getAccounts().get(0).getPreferences()).isNotNull();
     final Map<String, String> surrogateIds = userPrincipals.getAccounts().get(0)
         .getSurrogateIds();
-    assertThat(surrogateIds).isNull();
+    Assertions.assertThat(surrogateIds).isNull();
     LOGGER.debug("{}", userPrincipals);
   }
 
@@ -43,12 +43,12 @@ public class GetUserPrincipalsTestIT extends BaseTestIT {
             Field.streamerSubscriptionKeys,
             Field.preferences
         );
-    assertThat(userPrincipals).isNotNull();
-    assertThat(userPrincipals.getStreamerSubscriptionKeys()).isNotNull();
-    assertThat(userPrincipals.getStreamerInfo()).isNotNull();
-    assertThat(userPrincipals.getAccounts().get(0)
+    Assertions.assertThat(userPrincipals).isNotNull();
+    Assertions.assertThat(userPrincipals.getStreamerSubscriptionKeys()).isNotNull();
+    Assertions.assertThat(userPrincipals.getStreamerInfo()).isNotNull();
+    Assertions.assertThat(userPrincipals.getAccounts().get(0)
         .getSurrogateIds()).isNotNull();
-    assertThat(userPrincipals.getAccounts().get(0).getPreferences()).isNotNull();
+    Assertions.assertThat(userPrincipals.getAccounts().get(0).getPreferences()).isNotNull();
     LOGGER.debug("{}", userPrincipals);
   }
 

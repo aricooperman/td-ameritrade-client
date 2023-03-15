@@ -26,87 +26,87 @@ public class FetchQuotesTestIT extends BaseTestIT {
 
   @Test
   public void testStockQuote() {
-    final Quote quote = httpTdaClient.fetchQuote("msft");
-    assertThat(quote.getAssetType()).isEqualTo(AssetType.EQUITY);
-    assertThat(quote).isInstanceOf(EquityQuote.class);
-    assertThat(quote.getSymbol()).isEqualToIgnoringCase("msft");
+    final Quote quote = BaseTestIT.httpTdaClient.fetchQuote("msft");
+    Assertions.assertThat(quote.getAssetType()).isEqualTo(AssetType.EQUITY);
+    Assertions.assertThat(quote).isInstanceOf(EquityQuote.class);
+    Assertions.assertThat(quote.getSymbol()).isEqualToIgnoringCase("msft");
     EquityQuote equityQuote = (EquityQuote) quote;
-    assertThat(equityQuote).isNotNull();
-    assertThat(equityQuote.getAskPrice()).isGreaterThanOrEqualTo(BigDecimal.ONE);
+    Assertions.assertThat(equityQuote).isNotNull();
+    Assertions.assertThat(equityQuote.getAskPrice()).isGreaterThanOrEqualTo(BigDecimal.ONE);
   }
 
   @Test
   public void testStockQuotes() {
     List<String> stocks = Arrays.asList("VTSAX", "MSFT", "NOK/JPY", "$SPX.X", "MSFT_061821P65", "SPY");
-    final List<Quote> quotes = httpTdaClient.fetchQuotes(stocks);
-    assertThat(quotes).size().isEqualTo(6);
-    assertThat(quotes.get(0).getAssetType()).isEqualTo(AssetType.MUTUAL_FUND);
-    assertThat(quotes.get(0)).isInstanceOf(MutualFundQuote.class);
-    assertThat(quotes.get(1).getAssetType()).isEqualTo(AssetType.EQUITY);
-    assertThat(quotes.get(1)).isInstanceOf(EquityQuote.class);
-    assertThat(quotes.get(2).getSymbol()).isEqualTo("NOK/JPY");
-    assertThat(quotes.get(2).getAssetType()).isEqualTo(AssetType.FOREX);
-    assertThat(quotes.get(2)).isInstanceOf(ForexQuote.class);
-    assertThat(quotes.get(3)).isInstanceOf(IndexQuote.class);
-    assertThat(quotes.get(4)).isInstanceOf(OptionQuote.class);
-    assertThat(quotes.get(5)).isInstanceOf(EtfQuote.class);
+    final List<Quote> quotes = BaseTestIT.httpTdaClient.fetchQuotes(stocks);
+    Assertions.assertThat(quotes).size().isEqualTo(6);
+    Assertions.assertThat(quotes.get(0).getAssetType()).isEqualTo(AssetType.MUTUAL_FUND);
+    Assertions.assertThat(quotes.get(0)).isInstanceOf(MutualFundQuote.class);
+    Assertions.assertThat(quotes.get(1).getAssetType()).isEqualTo(AssetType.EQUITY);
+    Assertions.assertThat(quotes.get(1)).isInstanceOf(EquityQuote.class);
+    Assertions.assertThat(quotes.get(2).getSymbol()).isEqualTo("NOK/JPY");
+    Assertions.assertThat(quotes.get(2).getAssetType()).isEqualTo(AssetType.FOREX);
+    Assertions.assertThat(quotes.get(2)).isInstanceOf(ForexQuote.class);
+    Assertions.assertThat(quotes.get(3)).isInstanceOf(IndexQuote.class);
+    Assertions.assertThat(quotes.get(4)).isInstanceOf(OptionQuote.class);
+    Assertions.assertThat(quotes.get(5)).isInstanceOf(EtfQuote.class);
   }
 
   @Test
   public void testMutualFundQuotes() {
     List<String> mfs = Arrays.asList("VFIAX", "VTSAX");
-    final List<Quote> quotes = httpTdaClient.fetchQuotes(mfs);
-    assertThat(quotes.size()).isEqualTo(2);
+    final List<Quote> quotes = BaseTestIT.httpTdaClient.fetchQuotes(mfs);
+    Assertions.assertThat(quotes.size()).isEqualTo(2);
 
     MutualFundQuote mfq1 = (MutualFundQuote) quotes.get(0);
-    assertThat(mfq1.getAssetType()).isEqualTo(AssetType.MUTUAL_FUND);
-    assertThat(mfq1.getSymbol()).isEqualTo("VFIAX");
+    Assertions.assertThat(mfq1.getAssetType()).isEqualTo(AssetType.MUTUAL_FUND);
+    Assertions.assertThat(mfq1.getSymbol()).isEqualTo("VFIAX");
     LOGGER.debug(mfq1.toString());
 
     MutualFundQuote mfq2 = (MutualFundQuote) quotes.get(1);
-    assertThat(mfq2.getAssetType()).isEqualTo(AssetType.MUTUAL_FUND);
-    assertThat(mfq2.getSymbol()).isEqualTo("VTSAX");
+    Assertions.assertThat(mfq2.getAssetType()).isEqualTo(AssetType.MUTUAL_FUND);
+    Assertions.assertThat(mfq2.getSymbol()).isEqualTo("VTSAX");
     LOGGER.debug(mfq2.toString());
   }
 
   @Test
   public void testIndexQuotes() {
-    Quote quote = httpTdaClient.fetchQuote("$SPX.X");
-    assertThat(quote instanceof IndexQuote);
+    Quote quote = BaseTestIT.httpTdaClient.fetchQuote("$SPX.X");
+    Assertions.assertThat(quote instanceof IndexQuote);
     assert quote instanceof IndexQuote;
     IndexQuote indexQuote = (IndexQuote) quote;
-    assertThat(indexQuote.getSymbol()).isEqualTo("$SPX.X");
-    assertThat(indexQuote.getAssetType()).isEqualTo(AssetType.INDEX);
+    Assertions.assertThat(indexQuote.getSymbol()).isEqualTo("$SPX.X");
+    Assertions.assertThat(indexQuote.getAssetType()).isEqualTo(AssetType.INDEX);
     LOGGER.debug(indexQuote.toString());
   }
 
   //These will eventually expire and be invalid
   @Test
   public void testOptionQuote() {
-    final Quote quote = httpTdaClient.fetchQuote("MSFT_061821C120");
-    assertThat(quote instanceof OptionQuote);
+    final Quote quote = BaseTestIT.httpTdaClient.fetchQuote("MSFT_061821C120");
+    Assertions.assertThat(quote instanceof OptionQuote);
     assert quote instanceof OptionQuote;
     OptionQuote optionQuote = (OptionQuote) quote;
-    assertThat(optionQuote.getSymbol()).isEqualTo("MSFT_061821C120");
-    assertThat(optionQuote.getAssetType()).isEqualTo(AssetType.OPTION);
+    Assertions.assertThat(optionQuote.getSymbol()).isEqualTo("MSFT_061821C120");
+    Assertions.assertThat(optionQuote.getAssetType()).isEqualTo(AssetType.OPTION);
     LOGGER.debug(optionQuote.toString());
   }
 
   @Test
   public void testEtfQuote() {
-    final Quote quote = httpTdaClient.fetchQuote("SPY");
-    assertThat(quote instanceof EtfQuote);
+    final Quote quote = BaseTestIT.httpTdaClient.fetchQuote("SPY");
+    Assertions.assertThat(quote instanceof EtfQuote);
     assert quote instanceof EtfQuote;
     EtfQuote etfQuote= (EtfQuote) quote;
-    assertThat(etfQuote.getSymbol()).isEqualTo("SPY");
-    assertThat(etfQuote.getAssetType()).isEqualTo(AssetType.ETF);
+    Assertions.assertThat(etfQuote.getSymbol()).isEqualTo("SPY");
+    Assertions.assertThat(etfQuote.getAssetType()).isEqualTo(AssetType.ETF);
     LOGGER.debug(etfQuote.toString());
   }
 
   @Test
   public void testIssueQuote(){
-    final List<Quote> quotes = httpTdaClient.fetchQuotes(Arrays.asList("FNDF", "FNDE"));
-    assertThat(quotes).hasSize(2);
+    final List<Quote> quotes = BaseTestIT.httpTdaClient.fetchQuotes(Arrays.asList("FNDF", "FNDE"));
+    Assertions.assertThat(quotes).hasSize(2);
     quotes.forEach(q -> LOGGER.debug("{}", q));
   }
 
@@ -115,9 +115,9 @@ public class FetchQuotesTestIT extends BaseTestIT {
   //https://github.com/studerw/td-ameritrade-client/issues/24
   public void testOptionChainMarkVsTov(){
     String chain = "WYNN_080720P73.5";
-    final Quote quote = httpTdaClient.fetchQuote(
+    final Quote quote = BaseTestIT.httpTdaClient.fetchQuote(
         chain);
-    assertThat(quote instanceof OptionQuote);
+    Assertions.assertThat(quote instanceof OptionQuote);
     OptionQuote optionQuote = (OptionQuote)quote;
 
     BigDecimal askPrice = optionQuote.getAskPrice();
@@ -143,9 +143,9 @@ public class FetchQuotesTestIT extends BaseTestIT {
         .asList("AAPL", "MSFT", "AMZN", "META", "GOOGL", "GOOG", "BRK.B", "JNJ", "V", "PG");
 
     for (String symbol : symbols) {
-      final Quote quote = httpTdaClient.fetchQuote(symbol);
-      assertThat(quote).isNotNull();
-      assertThat(quote.getSymbol()).isEqualTo(symbol);
+      final Quote quote = BaseTestIT.httpTdaClient.fetchQuote(symbol);
+      Assertions.assertThat(quote).isNotNull();
+      Assertions.assertThat(quote.getSymbol()).isEqualTo(symbol);
       LOGGER.debug("{} - {}", quote.getSymbol(), quote.getDescription());
     }
   }

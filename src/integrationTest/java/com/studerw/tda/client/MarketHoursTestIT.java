@@ -22,14 +22,14 @@ public class MarketHoursTestIT extends BaseTestIT {
 
   @Test(expected = Exception.class)
   public void testHoursNullMarketType() {
-    httpTdaClient.getMarketHours(null);
+    BaseTestIT.httpTdaClient.getMarketHours(null);
 //    fail("shouldn't get here");
   }
 
   @Test(expected = Exception.class)
   public void testHoursNoMarketType() {
-    httpTdaClient.getMarketHours(new ArrayList<>());
-    fail("shouldn't get here");
+    BaseTestIT.httpTdaClient.getMarketHours(new ArrayList<>());
+    Assertions.fail("shouldn't get here");
   }
 
   @Test(expected = Exception.class)
@@ -37,16 +37,16 @@ public class MarketHoursTestIT extends BaseTestIT {
     List<Hours.MarketType> marketType = new ArrayList<>(Collections.singleton(Hours.MarketType.EQUITY));
     LocalDateTime ldt = LocalDateTime.now().minusDays(1);
 
-    final List<Hours> hours = httpTdaClient.getMarketHours(marketType, ldt);
-    fail("shouldn't get here");
+    final List<Hours> hours = BaseTestIT.httpTdaClient.getMarketHours(marketType, ldt);
+    Assertions.fail("shouldn't get here");
   }
 
   @Test
   public void testMarketHoursEquity() {
     List<Hours.MarketType> marketType = new ArrayList<>(Collections.singleton(Hours.MarketType.EQUITY));
 
-    final List<Hours> hours = httpTdaClient.getMarketHours(marketType);
-    assertThat(hours).isNotNull();
+    final List<Hours> hours = BaseTestIT.httpTdaClient.getMarketHours(marketType);
+    Assertions.assertThat(hours).isNotNull();
     LOGGER.debug(hours.toString());
     if (!Utils.isNullOrEmpty(hours.get(0).getOtherFields())) {
       LOGGER.warn("some files weren't mapped: {}", hours.get(0).getOtherFields());
@@ -58,8 +58,8 @@ public class MarketHoursTestIT extends BaseTestIT {
     List<Hours.MarketType> marketType = new ArrayList<>(Collections.singleton(Hours.MarketType.EQUITY));
     LocalDateTime ldt = LocalDateTime.now().plusDays(1);
 
-    final List<Hours> hours = httpTdaClient.getMarketHours(marketType, ldt);
-    assertThat(hours).isNotNull();
+    final List<Hours> hours = BaseTestIT.httpTdaClient.getMarketHours(marketType, ldt);
+    Assertions.assertThat(hours).isNotNull();
     LOGGER.debug(hours.toString());
     if (!Utils.isNullOrEmpty(hours.get(0).getOtherFields())) {
       LOGGER.warn("some files weren't mapped: {}", hours.get(0).getOtherFields());
@@ -71,8 +71,8 @@ public class MarketHoursTestIT extends BaseTestIT {
     List<Hours.MarketType> marketTypes = Arrays.asList(MarketType.EQUITY, MarketType.BOND, MarketType.ETF);
     LocalDateTime ldt = LocalDateTime.now().plusDays(1);
 
-    final List<Hours> hours = httpTdaClient.getMarketHours(marketTypes, ldt);
-    assertThat(hours).isNotNull();
+    final List<Hours> hours = BaseTestIT.httpTdaClient.getMarketHours(marketTypes, ldt);
+    Assertions.assertThat(hours).isNotNull();
     LOGGER.debug(hours.toString());
     if (!Utils.isNullOrEmpty(hours.get(0).getOtherFields())) {
       LOGGER.warn("some files weren't mapped: {}", hours.get(0).getOtherFields());

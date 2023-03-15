@@ -20,14 +20,14 @@ public class FetchTransactionsTestIT extends BaseTestIT {
   @Test(expected = IllegalArgumentException.class)
   public void testTransactionNull() {
     httpTdaClient.fetchTransactions(null, new TransactionRequest());
-    fail("shouldn't get here");
+    Assertions.fail("shouldn't get here");
   }
 
   @Test
   public void testFetchTransactionsDefaultEmpty() {
     TransactionRequest request = new TransactionRequest();
     final List<Transaction> transactions = this.httpTdaClient.fetchTransactions(getAccountId());
-    assertThat(transactions).isNotNull();
+    Assertions.assertThat(transactions).isNotNull();
     LOGGER.debug("{}", transactions);
   }
 
@@ -35,7 +35,7 @@ public class FetchTransactionsTestIT extends BaseTestIT {
   public void testFetchTransactions() {
     TransactionRequest request = new TransactionRequest();
     final List<Transaction> transactions = this.httpTdaClient.fetchTransactions(getAccountId(), request);
-    assertThat(transactions).isNotNull();
+    Assertions.assertThat(transactions).isNotNull();
     LOGGER.debug("{}", transactions);
   }
 
@@ -47,7 +47,7 @@ public class FetchTransactionsTestIT extends BaseTestIT {
         LocalDate.now().minusYears(1),
         LocalDate.now());
     final List<Transaction> transactions = this.httpTdaClient.fetchTransactions(getAccountId(), request);
-    assertThat(transactions).isNotEmpty();
+    Assertions.assertThat(transactions).isNotEmpty();
     transactions.forEach(t -> LOGGER.debug("{}", t));
   }
 }

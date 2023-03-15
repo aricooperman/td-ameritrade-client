@@ -17,12 +17,12 @@ public class OptionChainTestIT extends BaseTestIT {
   @Test
   public void testOptionChain() {
     final OptionChain optionChain = httpTdaClient.getOptionChain("msft");
-    assertThat(optionChain).isNotNull();
-    assertThat(optionChain.getStatus()).isEqualTo("SUCCESS");
-    assertThat(optionChain.getSymbol()).isEqualTo("MSFT");
-    assertThat(optionChain.getUnderlying()).isNull();
-    assertThat(optionChain.getPutExpDateMap()).isNotEmpty();
-    assertThat(optionChain.getCallExpDateMap()).isNotEmpty();
+    Assertions.assertThat(optionChain).isNotNull();
+    Assertions.assertThat(optionChain.getStatus()).isEqualTo("SUCCESS");
+    Assertions.assertThat(optionChain.getSymbol()).isEqualTo("MSFT");
+    Assertions.assertThat(optionChain.getUnderlying()).isNull();
+    Assertions.assertThat(optionChain.getPutExpDateMap()).isNotEmpty();
+    Assertions.assertThat(optionChain.getCallExpDateMap()).isNotEmpty();
 
     LOGGER.debug("{}", optionChain);
 
@@ -33,12 +33,12 @@ public class OptionChainTestIT extends BaseTestIT {
   @Test
   public void testOptionChain2() {
     final OptionChain optionChain = httpTdaClient.getOptionChain("amzn");
-    assertThat(optionChain).isNotNull();
-    assertThat(optionChain.getStatus()).isEqualTo("SUCCESS");
-    assertThat(optionChain.getSymbol()).isEqualTo("AMZN");
-    assertThat(optionChain.getUnderlying()).isNull();
-    assertThat(optionChain.getPutExpDateMap()).isNotEmpty();
-    assertThat(optionChain.getCallExpDateMap()).isNotEmpty();
+    Assertions.assertThat(optionChain).isNotNull();
+    Assertions.assertThat(optionChain.getStatus()).isEqualTo("SUCCESS");
+    Assertions.assertThat(optionChain.getSymbol()).isEqualTo("AMZN");
+    Assertions.assertThat(optionChain.getUnderlying()).isNull();
+    Assertions.assertThat(optionChain.getPutExpDateMap()).isNotEmpty();
+    Assertions.assertThat(optionChain.getCallExpDateMap()).isNotEmpty();
 
 //    LOGGER.debug("{}", optionChain);
 
@@ -64,12 +64,12 @@ public class OptionChainTestIT extends BaseTestIT {
             .withContractType(OptionChainReq.ContractType.CALL)
             .build();
     final OptionChain optionChain = httpTdaClient.getOptionChain(request);
-    assertThat(optionChain).isNotNull();
-    assertThat(optionChain.getStatus()).isEqualTo("SUCCESS");
-    assertThat(optionChain.getSymbol()).isEqualTo("MSFT");
-    assertThat(optionChain.getUnderlying()).isNull();
-    assertThat(optionChain.getPutExpDateMap()).isEmpty();
-    assertThat(optionChain.getCallExpDateMap()).isNotEmpty();
+    Assertions.assertThat(optionChain).isNotNull();
+    Assertions.assertThat(optionChain.getStatus()).isEqualTo("SUCCESS");
+    Assertions.assertThat(optionChain.getSymbol()).isEqualTo("MSFT");
+    Assertions.assertThat(optionChain.getUnderlying()).isNull();
+    Assertions.assertThat(optionChain.getPutExpDateMap()).isEmpty();
+    Assertions.assertThat(optionChain.getCallExpDateMap()).isNotEmpty();
 
     LOGGER.debug("{}", optionChain);
     LOGGER.debug("Size of puts: {}", optionChain.getPutExpDateMap().size());

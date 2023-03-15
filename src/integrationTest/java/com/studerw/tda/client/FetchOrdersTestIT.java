@@ -35,8 +35,8 @@ public class FetchOrdersTestIT extends BaseTestIT {
 
   @Test(expected = IllegalArgumentException.class)
   public void testPlaceOrderNoId() {
-    httpTdaClient.placeOrder(null, new Order());
-    fail("shouldn't get here");
+    BaseTestIT.httpTdaClient.placeOrder(null, new Order());
+    Assertions.fail("shouldn't get here");
   }
 
 
@@ -60,7 +60,7 @@ public class FetchOrdersTestIT extends BaseTestIT {
   public void testFetchOrders() {
     OrderRequest orderRequest = new OrderRequest();
     final List<Order> orders = this.httpTdaClient.fetchOrders(getAccountId(), orderRequest);
-    assertThat(orders).isNotNull();
+    Assertions.assertThat(orders).isNotNull();
     orders.forEach(o -> LOGGER.debug(o.toString()));
   }
 
@@ -69,7 +69,7 @@ public class FetchOrdersTestIT extends BaseTestIT {
     OrderRequest orderRequest = new OrderRequest(ZonedDateTime.now().minusDays(10),
         ZonedDateTime.now().plusDays(10));
     final List<Order> orders = this.httpTdaClient.fetchOrders(getAccountId(), orderRequest);
-    assertThat(orders).isNotNull();
+    Assertions.assertThat(orders).isNotNull();
     orders.forEach(o -> LOGGER.debug(o.toString()));
   }
 
@@ -80,20 +80,20 @@ public class FetchOrdersTestIT extends BaseTestIT {
     LOGGER.debug("Initial count of orders: {}", originalOrders.size());
 
     this.httpTdaClient.placeOrder(getAccountId(), simpleOrder());
-    final List<Order> orders = httpTdaClient.fetchOrders();
+    final List<Order> orders = BaseTestIT.httpTdaClient.fetchOrders();
     LOGGER.debug("new count of orders: {}", orders.size());
-    assertThat(orders.size()).isEqualTo(originalOrders.size() + 1);
+    Assertions.assertThat(orders.size()).isEqualTo(originalOrders.size() + 1);
 
     final Long orderId = orders.get(0).getOrderId();
     LOGGER.debug("OrderId: {}", orderId);
-    httpTdaClient.cancelOrder(getAccountId(), String.valueOf(orderId));
+    BaseTestIT.httpTdaClient.cancelOrder(getAccountId(), String.valueOf(orderId));
 
-    final List<Order> orders2 = httpTdaClient.fetchOrders();
+    final List<Order> orders2 = BaseTestIT.httpTdaClient.fetchOrders();
     LOGGER.debug("final count of orders: {}", orders2.size());
     final Optional<Order> first = orders2.stream()
         .filter(order -> order.getOrderId().equals(orderId)).findFirst();
-    assertThat(first.isPresent());
-    assertThat(first.get().getStatus()).isEqualTo(Status.CANCELED);
+    Assertions.assertThat(first.isPresent());
+    Assertions.assertThat(first.get().getStatus()).isEqualTo(Status.CANCELED);
   }
 
   @Test
@@ -106,7 +106,7 @@ public class FetchOrdersTestIT extends BaseTestIT {
   @Test
   public void testAllOrders() {
     final List<Order> orders = this.httpTdaClient.fetchOrders(new OrderRequest());
-    assertThat(orders).isNotNull();
+    Assertions.assertThat(orders).isNotNull();
     LOGGER.debug("{}", orders);
   }
 
@@ -118,16 +118,16 @@ public class FetchOrdersTestIT extends BaseTestIT {
       return;
     }
     Long orderId = orders.get(0).getOrderId();
-    final Order order = httpTdaClient.fetchOrder(getAccountId(), orderId);
-    assertThat(order).isNotNull();
-    assertThat(order.getOrderId()).isEqualTo(orderId);
+    final Order order = BaseTestIT.httpTdaClient.fetchOrder(getAccountId(), orderId);
+    Assertions.assertThat(order).isNotNull();
+    Assertions.assertThat(order.getOrderId()).isEqualTo(orderId);
     LOGGER.debug("{}", order);
   }
 
   @Test(expected = RuntimeException.class)
   public void testFetchBadOrder() {
     final Order order = this.httpTdaClient.fetchOrder(getAccountId(), -1L);
-    fail("Should have thrown RuntimeException");
+    Assertions.fail("Should have thrown RuntimeException");
 
   }
 

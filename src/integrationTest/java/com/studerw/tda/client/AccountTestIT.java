@@ -1,16 +1,15 @@
 package com.studerw.tda.client;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-
 import com.studerw.tda.model.account.SecuritiesAccount;
 import com.studerw.tda.parse.Utils;
-import java.util.List;
 import org.apache.commons.lang3.StringUtils;
+import org.assertj.core.api.Assertions;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 
 public class AccountTestIT extends BaseTestIT {
@@ -20,7 +19,7 @@ public class AccountTestIT extends BaseTestIT {
   @Test(expected = Exception.class)
   public void testAccountNoId() {
     httpTdaClient.getAccount("", false, false);
-    fail("shouldn't get here");
+    Assertions.fail("shouldn't get here");
   }
 
   @Test
@@ -32,7 +31,7 @@ public class AccountTestIT extends BaseTestIT {
     }
 
     final SecuritiesAccount account = httpTdaClient.getAccount(getAccountId(), true, true);
-    assertThat(account).isNotNull();
+    Assertions.assertThat(account).isNotNull();
     LOGGER.debug(account.toString());
     if (!Utils.isNullOrEmpty(account.getOtherFields())) {
       LOGGER.warn("some files weren't mapped: {}", account.getOtherFields());
@@ -56,7 +55,7 @@ public class AccountTestIT extends BaseTestIT {
     String fromProps = getAccountId();
     final List<SecuritiesAccount> accounts = httpTdaClient.getAccounts(false, false);
     String fromClient = accounts.get(0).getAccountId();
-    assertThat(fromProps).isEqualTo(fromClient);
+    Assertions.assertThat(fromProps).isEqualTo(fromClient);
     LOGGER.debug("{} should equal {}", fromProps, fromClient);
   }
 

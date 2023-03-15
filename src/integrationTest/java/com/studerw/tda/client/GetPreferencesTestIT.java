@@ -15,7 +15,7 @@ public class GetPreferencesTestIT extends BaseTestIT {
   @Test
   public void testGetPreferences() {
     final Preferences preferences = httpTdaClient.getPreferences(getAccountId());
-    assertThat(preferences).isNotNull();
+    Assertions.assertThat(preferences).isNotNull();
     LOGGER.debug("{}", preferences);
   }
 }

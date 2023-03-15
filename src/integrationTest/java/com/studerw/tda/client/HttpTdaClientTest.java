@@ -18,16 +18,16 @@ public class HttpTdaClientTest {
   @Test(expected = IllegalArgumentException.class)
   public void testNoProps() {
     new HttpTdaClient(new Properties());
-    fail("should not get here");
+    Fail.fail("should not get here");
   }
 
   @Test
   public void testDefaultPropsInResources() {
     HttpTdaClient client = new HttpTdaClient();
-    assertThat(client.tdaProps.getProperty("tda.token.refresh")).isEqualTo("<REFRESH_TOKEN>");
-    assertThat(client.tdaProps.getProperty("tda.client_id")).isEqualTo("<CLIENT_ID>");
-    assertThat(client.tdaProps.getProperty("tda.url")).isEqualTo(HttpTdaClient.DEFAULT_PATH);
-    assertThat(client.tdaProps.getProperty("tda.debug.bytes.length")).isEqualTo("-1");
+    Assertions.assertThat(client.tdaProps.getProperty("tda.token.refresh")).isEqualTo("<REFRESH_TOKEN>");
+    Assertions.assertThat(client.tdaProps.getProperty("tda.client_id")).isEqualTo("<CLIENT_ID>");
+    Assertions.assertThat(client.tdaProps.getProperty("tda.url")).isEqualTo(HttpTdaClient.DEFAULT_PATH);
+    Assertions.assertThat(client.tdaProps.getProperty("tda.debug.bytes.length")).isEqualTo("-1");
   }
 
   @Test
@@ -37,9 +37,9 @@ public class HttpTdaClientTest {
     props.setProperty("tda.client_id", "abd");
     LOGGER.debug("Set valid props, others using defaults");
     HttpTdaClient client = new HttpTdaClient(props);
-    assertThat(client.tdaProps.getProperty("tda.token.refresh")).isEqualTo("abd");
-    assertThat(client.tdaProps.getProperty("tda.client_id")).isEqualTo("abd");
-    assertThat(client.tdaProps.getProperty("tda.url")).isEqualTo(HttpTdaClient.DEFAULT_PATH);
-    assertThat(client.tdaProps.getProperty("tda.debug.bytes.length")).isEqualTo("-1");
+    Assertions.assertThat(client.tdaProps.getProperty("tda.token.refresh")).isEqualTo("abd");
+    Assertions.assertThat(client.tdaProps.getProperty("tda.client_id")).isEqualTo("abd");
+    Assertions.assertThat(client.tdaProps.getProperty("tda.url")).isEqualTo(HttpTdaClient.DEFAULT_PATH);
+    Assertions.assertThat(client.tdaProps.getProperty("tda.debug.bytes.length")).isEqualTo("-1");
   }
 }

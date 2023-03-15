@@ -45,7 +45,7 @@ public class TransactionRequestValidator {
    */
   private static List<String> checkDates(TransactionRequest request) {
     if (request.getStartDate() == null && request.getEndDate() == null) {
-      return Collections.EMPTY_LIST;
+      return Collections.emptyList();
     }
     List<String> violations = new ArrayList<>();
 
@@ -79,7 +79,7 @@ public class TransactionRequestValidator {
       return violations;
     }
 
-    return Collections.EMPTY_LIST;
+    return Collections.emptyList();
   }
 
   /**
