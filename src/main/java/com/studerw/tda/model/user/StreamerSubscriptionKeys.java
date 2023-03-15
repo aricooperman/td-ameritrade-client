@@ -2,6 +2,8 @@ package com.studerw.tda.model.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,10 +13,11 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class StreamerSubscriptionKeys implements Serializable {
 
+  @Serial
   private final static long serialVersionUID = -637282248561104982L;
 
   @JsonProperty("keys")
-  private List<Key> keys = new ArrayList<Key>();
+  private List<Key> keys = new ArrayList<>();
 
   public List<Key> getKeys() {
     return keys;

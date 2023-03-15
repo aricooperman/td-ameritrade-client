@@ -45,7 +45,7 @@ public class OrderRequestValidator {
    */
   private static List<String> checkDates(OrderRequest orderRequest) {
     if (orderRequest.getFromEnteredTime() == null && orderRequest.getToEnteredTime() == null) {
-      return Collections.EMPTY_LIST;
+      return Collections.emptyList();
     }
     List<String> violations = new ArrayList<>();
 
@@ -79,7 +79,7 @@ public class OrderRequestValidator {
       return violations;
     }
 
-    return Collections.EMPTY_LIST;
+    return Collections.emptyList();
   }
 
   /**

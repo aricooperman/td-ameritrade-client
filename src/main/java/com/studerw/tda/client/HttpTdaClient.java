@@ -23,21 +23,11 @@ import com.studerw.tda.model.transaction.Transaction;
 import com.studerw.tda.model.transaction.TransactionRequest;
 import com.studerw.tda.model.transaction.TransactionRequestValidator;
 import com.studerw.tda.model.user.Preferences;
-import com.studerw.tda.model.user.StreamerSubscriptionKeys;
 import com.studerw.tda.model.user.UserPrincipals;
 import com.studerw.tda.model.user.UserPrincipals.Field;
 import com.studerw.tda.parse.DefaultMapper;
 import com.studerw.tda.parse.TdaJsonParser;
 import com.studerw.tda.parse.Utils;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-
 import okhttp3.Headers;
 import okhttp3.HttpUrl;
 import okhttp3.HttpUrl.Builder;
@@ -50,6 +40,19 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Properties;
+
 /**
  * HTTP implementation of {@link TdaClient} which uses OKHttp3 under the hood and uses the new OAuth
  * based security.
@@ -59,8 +62,6 @@ import org.slf4j.LoggerFactory;
  */
 public class HttpTdaClient implements TdaClient {
 
-  protected static final int LOGGING_BYTES = -1;
-  protected static final DateTimeFormatter ISO_FORMATTER = DateTimeFormatter.BASIC_ISO_DATE;
   protected static final String DEFAULT_PATH = "https://api.tdameritrade.com/v1";
   private static final Logger LOGGER = LoggerFactory.getLogger(HttpTdaClient.class);
 
@@ -178,7 +179,7 @@ public class HttpTdaClient implements TdaClient {
     Request request = new Request.Builder().url(url).headers(defaultHeaders()).build();
     try (Response response = this.httpClient.newCall(request).execute()) {
       checkResponse(response, false);
-      return tdaJsonParser.parsePriceHistory(response.body().byteStream());
+      return tdaJsonParser.parsePriceHistory(getByteStream(response));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -222,7 +223,7 @@ public class HttpTdaClient implements TdaClient {
 
     try (Response response = this.httpClient.newCall(request).execute()) {
       checkResponse(response, false);
-      return tdaJsonParser.parsePriceHistory(response.body().byteStream());
+      return tdaJsonParser.parsePriceHistory(getByteStream(response));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -241,7 +242,7 @@ public class HttpTdaClient implements TdaClient {
 
     try (Response response = this.httpClient.newCall(request).execute()) {
       checkResponse(response, false);
-      return tdaJsonParser.parseQuotes(response.body().byteStream());
+      return tdaJsonParser.parseQuotes(getByteStream(response));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -278,7 +279,7 @@ public class HttpTdaClient implements TdaClient {
 
     try (Response response = this.httpClient.newCall(request).execute()) {
       checkResponse(response, false);
-      return tdaJsonParser.parseAccount(response.body().byteStream());
+      return tdaJsonParser.parseAccount(getByteStream(response));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -306,7 +307,7 @@ public class HttpTdaClient implements TdaClient {
 
     try (Response response = this.httpClient.newCall(request).execute()) {
       checkResponse(response, false);
-      return tdaJsonParser.parseAccounts(response.body().byteStream());
+      return tdaJsonParser.parseAccounts(getByteStream(response));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -320,25 +321,25 @@ public class HttpTdaClient implements TdaClient {
 
   @Override
   public List<Hours> getMarketHours(List<Hours.MarketType> marketTypes, LocalDateTime date) {
-    if(marketTypes == null || (marketTypes != null && marketTypes.size() == 0)) {
+    if(marketTypes == null || marketTypes.size() == 0) {
       throw new IllegalArgumentException("One or more Hours.MarketType(s) are required");
     }
     if(date != null && date.isBefore(LocalDateTime.now())) {
       throw new IllegalArgumentException("Date must be a future date.");
     }
-    String stringMarketTypes = "";
+
+    StringBuilder stringMarketTypes = new StringBuilder();
     for(Hours.MarketType mt: marketTypes) {
       if(stringMarketTypes.length() > 0) {
-        stringMarketTypes += ",";
+        stringMarketTypes.append(",");
       }
-      stringMarketTypes += mt.toString();
+      stringMarketTypes.append(mt.toString());
     }
     LOGGER.info("GetMarketHours[marketType={}]", stringMarketTypes);
-    List<String> args = new ArrayList<>();
 
     final Builder hoursBldr = baseUrl("marketdata", "hours");
     if(stringMarketTypes.length() > 0) {
-      hoursBldr.addQueryParameter("markets", stringMarketTypes);
+      hoursBldr.addQueryParameter("markets", stringMarketTypes.toString());
     } else {
       throw new IllegalArgumentException("One or more Hours.MarketType(s) are required");
     }
@@ -352,10 +353,14 @@ public class HttpTdaClient implements TdaClient {
 
     try (Response response = this.httpClient.newCall(request).execute()) {
       checkResponse(response, false);
-      return tdaJsonParser.parseMarketHours(response.body().byteStream());
+      return tdaJsonParser.parseMarketHours(getByteStream(response));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  private static InputStream getByteStream(Response response) {
+    return Objects.requireNonNull(Objects.requireNonNull(response).body()).byteStream();
   }
 
   @Override
@@ -421,7 +426,7 @@ public class HttpTdaClient implements TdaClient {
 
     try (Response response = this.httpClient.newCall(request).execute()) {
       checkResponse(response, false);
-      return tdaJsonParser.parseOrders(response.body().byteStream());
+      return tdaJsonParser.parseOrders(getByteStream(response));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -458,7 +463,7 @@ public class HttpTdaClient implements TdaClient {
 
     try (Response response = this.httpClient.newCall(request).execute()) {
       checkResponse(response, false);
-      return tdaJsonParser.parseOrders(response.body().byteStream());
+      return tdaJsonParser.parseOrders(getByteStream(response));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -475,7 +480,7 @@ public class HttpTdaClient implements TdaClient {
 
     try (Response response = this.httpClient.newCall(request).execute()) {
       checkResponse(response, false);
-      return tdaJsonParser.parseOrders(response.body().byteStream());
+      return tdaJsonParser.parseOrders(getByteStream(response));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -499,7 +504,7 @@ public class HttpTdaClient implements TdaClient {
 
     try (Response response = this.httpClient.newCall(request).execute()) {
       checkResponse(response, false);
-      return tdaJsonParser.parseOrder(response.body().byteStream());
+      return tdaJsonParser.parseOrder(getByteStream(response));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -553,7 +558,7 @@ public class HttpTdaClient implements TdaClient {
 
     try (Response response = this.httpClient.newCall(request).execute()) {
       checkResponse(response, false);
-      return tdaJsonParser.parseInstrumentMap(response.body().byteStream());
+      return tdaJsonParser.parseInstrumentMap(getByteStream(response));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -575,7 +580,7 @@ public class HttpTdaClient implements TdaClient {
     try (Response response = this.httpClient.newCall(request).execute()) {
       checkResponse(response, false);
       final List<FullInstrument> fullInstruments = tdaJsonParser
-          .parseFullInstrumentMap(response.body().byteStream());
+          .parseFullInstrumentMap(getByteStream(response));
       if (fullInstruments.size() != 1) {
         throw new RuntimeException(
             "Expecting a single instrument but received: " + fullInstruments.size());
@@ -606,7 +611,7 @@ public class HttpTdaClient implements TdaClient {
 
     try (Response response = this.httpClient.newCall(request).execute()) {
       checkResponse(response, true);
-      return tdaJsonParser.parseMovers(response.body().byteStream());
+      return tdaJsonParser.parseMovers(getByteStream(response));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -665,7 +670,7 @@ public class HttpTdaClient implements TdaClient {
 
     try (Response response = this.httpClient.newCall(request).execute()) {
       checkResponse(response, false);
-      return tdaJsonParser.parseOptionChain(response.body().byteStream());
+      return tdaJsonParser.parseOptionChain(getByteStream(response));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -723,7 +728,7 @@ public class HttpTdaClient implements TdaClient {
 
     try (Response response = this.httpClient.newCall(httpReq).execute()) {
       checkResponse(response, true);
-      return tdaJsonParser.parseTransactions(response.body().byteStream());
+      return tdaJsonParser.parseTransactions(getByteStream(response));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -752,7 +757,7 @@ public class HttpTdaClient implements TdaClient {
 
     try (Response response = this.httpClient.newCall(request).execute()) {
       checkResponse(response, false);
-      return tdaJsonParser.parseTransaction(response.body().byteStream());
+      return tdaJsonParser.parseTransaction(getByteStream(response));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -775,7 +780,7 @@ public class HttpTdaClient implements TdaClient {
 
     try (Response response = this.httpClient.newCall(request).execute()) {
       checkResponse(response, false);
-      return tdaJsonParser.parsePreferences(response.body().byteStream());
+      return tdaJsonParser.parsePreferences(getByteStream(response));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -783,11 +788,11 @@ public class HttpTdaClient implements TdaClient {
 
   @Override
   public UserPrincipals getUserPrincipals(Field... fields) {
-    LOGGER.info("getUserPrincipals with additional fields: {}", fields);
+    LOGGER.info("getUserPrincipals with additional fields: {}", (Object) fields);
 
     Builder urlBuilder = baseUrl("userprincipals");
 
-    List<String> fieldsStr = new ArrayList();
+    List<String> fieldsStr = new ArrayList<>();
     for (Field field : fields) {
       fieldsStr.add(field.toString());
     }
@@ -803,7 +808,7 @@ public class HttpTdaClient implements TdaClient {
 
     try (Response response = this.httpClient.newCall(request).execute()) {
       checkResponse(response, false);
-      return tdaJsonParser.parseUserPrincipals(response.body().byteStream());
+      return tdaJsonParser.parseUserPrincipals(getByteStream(response));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -831,33 +836,33 @@ public class HttpTdaClient implements TdaClient {
 
     try (Response response = this.httpClient.newCall(request).execute()) {
       checkResponse(response, false);
-      return tdaJsonParser.parseInstrumentArraySingle(response.body().byteStream());
+      return tdaJsonParser.parseInstrumentArraySingle(getByteStream(response));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
 
-  protected StreamerSubscriptionKeys getSubscriptionKeys(List<String> accountsIds) {
-    LOGGER.info("getSubscriptionKeys: {}", accountsIds);
-    if(Utils.isNullOrEmpty(accountsIds)){
-      throw new IllegalArgumentException("AccountIds list must contain at least one account id");
-    }
-
-    Builder urlBuilder = baseUrl("userprincipals", "streamersubscriptionkeys")
-        .addQueryParameter("accountIds", String.join(",", accountsIds));
-
-    Request request = new Request.Builder()
-        .url(urlBuilder.build())
-        .headers(defaultHeaders())
-        .build();
-
-    try (Response response = this.httpClient.newCall(request).execute()) {
-      checkResponse(response, false);
-      return tdaJsonParser.parseSubscriptionKeys(response.body().byteStream());
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
+//  protected StreamerSubscriptionKeys getSubscriptionKeys(List<String> accountsIds) {
+//    LOGGER.info("getSubscriptionKeys: {}", accountsIds);
+//    if(Utils.isNullOrEmpty(accountsIds)){
+//      throw new IllegalArgumentException("AccountIds list must contain at least one account id");
+//    }
+//
+//    Builder urlBuilder = baseUrl("userprincipals", "streamersubscriptionkeys")
+//        .addQueryParameter("accountIds", String.join(",", accountsIds));
+//
+//    Request request = new Request.Builder()
+//        .url(urlBuilder.build())
+//        .headers(defaultHeaders())
+//        .build();
+//
+//    try (Response response = this.httpClient.newCall(request).execute()) {
+//      checkResponse(response, false);
+//      return tdaJsonParser.parseSubscriptionKeys(getByteStream(response));
+//    } catch (IOException e) {
+//      throw new RuntimeException(e);
+//    }
+//  }
 
   /**
    * @param response the tda response
@@ -868,7 +873,7 @@ public class HttpTdaClient implements TdaClient {
       String errorMsg = response.message();
       if (StringUtils.isBlank(errorMsg)) {
         try {
-          errorMsg = response.body().string();
+          errorMsg = Objects.requireNonNull(response.body()).string();
         } catch (Exception e) {
           LOGGER.warn("No error message nor error body");
           errorMsg = "UNKNOWN";
@@ -906,7 +911,7 @@ public class HttpTdaClient implements TdaClient {
     if (this.httpUrl == null) {
       this.httpUrl = HttpUrl.parse(tdaProps.getProperty("tda.url"));
     }
-    Builder builder = httpUrl.newBuilder();
+    Builder builder = Objects.requireNonNull(httpUrl).newBuilder();
     for (String segment : pathSegments) {
       builder.addPathSegment(segment);
     }

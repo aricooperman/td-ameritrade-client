@@ -3,9 +3,12 @@ package com.studerw.tda.parse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,15 +22,16 @@ public class  DefaultMapper {
   private final static ObjectMapper defaultMapper;
 
   static {
-    defaultMapper = new ObjectMapper();
-
     SimpleModule module =
-        new SimpleModule("BigDecimalNanDeserializer", new Version(1, 0, 0, null, null, null));
+            new SimpleModule("BigDecimalNanDeserializer", new Version(1, 0, 0, null, null, null));
     module.addDeserializer(BigDecimal.class, new BigDecimalNanDeserializer());
-    defaultMapper.registerModule(module);
-    defaultMapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
-//    defaultMapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
-//    defaultMapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
+
+    defaultMapper = JsonMapper.builder()
+            .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
+//            .enable(DeserializationFeature.UNWRAP_ROOT_VALUE)
+//            .enable(SerializationFeature.WRAP_ROOT_VALUE)
+            .addModule(module)
+            .build();
   }
 
 
@@ -92,5 +96,13 @@ public class  DefaultMapper {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public static JsonNode readTree(InputStream in) throws IOException {
+      return defaultMapper.readTree(in);
+  }
+
+  public static <T> T treeToValue(JsonNode node, Class<T> clazz) throws JsonProcessingException {
+    return defaultMapper.treeToValue(node, clazz);
   }
 }

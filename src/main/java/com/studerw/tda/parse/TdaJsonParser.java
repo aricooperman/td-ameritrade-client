@@ -27,6 +27,28 @@ import org.slf4j.LoggerFactory;
 public class TdaJsonParser {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(TdaJsonParser.class);
+  private static final TypeReference<LinkedHashMap<String, Quote>> MAPPED_QUOTE_TYPE_REF = new TypeReference<>() {};
+  private static final TypeReference<List<Map<String, SecuritiesAccount>>> LIST_MAP_SEC_ACCT_TYPE_REF = new TypeReference<>() {};
+  private static final TypeReference<List<Order>> LIST_ORDER_TYPE_REF = new TypeReference<>() {};
+  private static final TypeReference<List<Instrument>> LIST_INSTRUMENT_TYPE_REF = new TypeReference<>() {};
+  private static final TypeReference<Map<String, Instrument>> MAP_INSTRUMENT_TYPE_REF = new TypeReference<>() {
+  };
+  private static final TypeReference<Map<String, FullInstrument>> MAP_FULL_INSTRUMENT_TYPE_REFERENCE = new TypeReference<>() {
+  };
+  private static final TypeReference<List<Mover>> LIST_MOVER_TYPE_REF = new TypeReference<>() {
+  };
+  private static final TypeReference<OptionChain> OPTION_CHAIN_TYPE_REF = new TypeReference<>() {
+  };
+  private static final TypeReference<List<Transaction>> LIST_TRANS_TYPE_REF = new TypeReference<>() {
+  };
+  private static final TypeReference<Transaction> TRANSACTION_TYPE_REF = new TypeReference<>() {
+  };
+  private static final TypeReference<Preferences> PREFERENCES_TYPE_REF = new TypeReference<>() {
+  };
+  private static final TypeReference<UserPrincipals> USER_PRINCIPALS_TYPE_REF = new TypeReference<>() {
+  };
+  private static final TypeReference<StreamerSubscriptionKeys> STREAMER_SUBSCRIPTION_KEYS_TYPE_REF = new TypeReference<>() {
+  };
 
   /**
    * @param in inputstream of JSON from rest call to TDA. The stream will be closed upon return.
@@ -35,7 +57,7 @@ public class TdaJsonParser {
   public List<Quote> parseQuotes(InputStream in) {
     LOGGER.trace("parsing quotes...");
     try (BufferedInputStream bIn = new BufferedInputStream(in)) {
-      LinkedHashMap<String, Quote> quotesMap = DefaultMapper.fromJson(bIn, new TypeReference<LinkedHashMap<String, Quote>>() {});
+      LinkedHashMap<String, Quote> quotesMap = DefaultMapper.fromJson(bIn, MAPPED_QUOTE_TYPE_REF);
       LOGGER.debug("returned a map of size: {}", quotesMap.size());
 
       List<Quote> quotes = new ArrayList<>();
@@ -92,12 +114,10 @@ public class TdaJsonParser {
   public List<SecuritiesAccount> parseAccounts(InputStream in) {
     LOGGER.trace("parsing securitiesAccounts...");
     try (BufferedInputStream bIn = new BufferedInputStream(in)) {
-
-      TypeReference<List<Map<String, SecuritiesAccount>>> typeReference = new TypeReference<List<Map<String, SecuritiesAccount>>>() {
-      };
-      ObjectMapper mapper = new ObjectMapper();
+//      ObjectMapper mapper = new ObjectMapper();
       List<SecuritiesAccount> accounts = new ArrayList<>();
-      List<Map<String, SecuritiesAccount>> maps = mapper.readValue(bIn, typeReference);
+//      List<Map<String, SecuritiesAccount>> maps = mapper.readValue(bIn, LIST_MAP_SEC_ACCT_TYPE_REF);
+      List<Map<String, SecuritiesAccount>> maps = DefaultMapper.fromJson(bIn, LIST_MAP_SEC_ACCT_TYPE_REF);
       for (Map<String, SecuritiesAccount> map : maps) {
         if (map.size() != 1 && map.containsKey("securitiesAccount")) {
           throw new IllegalStateException("Expecting of json list of securitiesAccount");
@@ -129,8 +149,7 @@ public class TdaJsonParser {
   public List<Order> parseOrders(InputStream in) {
     LOGGER.trace("parsing orders...");
     try (BufferedInputStream bIn = new BufferedInputStream(in)) {
-      TypeReference<List<Order>> typeReference = new TypeReference<List<Order>>() {};
-      final List<Order> orders= DefaultMapper.fromJson(bIn, typeReference);
+      final List<Order> orders= DefaultMapper.fromJson(bIn, LIST_ORDER_TYPE_REF);
       LOGGER.debug("Returned list of orders of size: {}", orders.size());
       return orders;
     } catch (IOException e) {
@@ -147,8 +166,7 @@ public class TdaJsonParser {
   public Instrument parseInstrumentArraySingle(InputStream in) {
     LOGGER.trace("parsing instrument array...");
     try (BufferedInputStream bIn = new BufferedInputStream(in)) {
-      TypeReference<List<Instrument>> typeReference = new TypeReference<List<Instrument>>() {};
-      List<Instrument> instruments = DefaultMapper.fromJson(bIn, typeReference);
+      List<Instrument> instruments = DefaultMapper.fromJson(bIn, LIST_INSTRUMENT_TYPE_REF);
       if (instruments.size() != 1) {
         throw new RuntimeException("Excepting a json array of Instruments from TDA");
       }
@@ -169,10 +187,9 @@ public class TdaJsonParser {
   public List<Instrument> parseInstrumentMap(InputStream in) {
     LOGGER.trace("parsing instrument map...");
     try (BufferedInputStream bIn = new BufferedInputStream(in)) {
-      TypeReference<Map<String, Instrument>> typeReference = new TypeReference<Map<String, Instrument>>() {};
-      Map<String, Instrument> instruments = DefaultMapper.fromJson(bIn, typeReference);
+      Map<String, Instrument> instruments = DefaultMapper.fromJson(bIn, MAP_INSTRUMENT_TYPE_REF);
       LOGGER.debug("Returned instruments map of size: {}", instruments.size());
-      return new ArrayList(instruments.values());
+      return new ArrayList<>(instruments.values());
     } catch (IOException e) {
       e.printStackTrace();
       throw new RuntimeException(e);
@@ -187,10 +204,9 @@ public class TdaJsonParser {
   public List<FullInstrument> parseFullInstrumentMap(InputStream in) {
     LOGGER.trace("parsing full instrument map...");
     try (BufferedInputStream bIn = new BufferedInputStream(in)) {
-      TypeReference<Map<String, FullInstrument>> typeReference = new TypeReference<Map<String, FullInstrument>>() {};
-      Map<String, FullInstrument> instruments = DefaultMapper.fromJson(bIn, typeReference);
+      Map<String, FullInstrument> instruments = DefaultMapper.fromJson(bIn, MAP_FULL_INSTRUMENT_TYPE_REFERENCE);
       LOGGER.debug("Returned full instruments map of size: {}", instruments.size());
-      return new ArrayList(instruments.values());
+      return new ArrayList<>(instruments.values());
     } catch (IOException e) {
       e.printStackTrace();
       throw new RuntimeException(e);
@@ -200,8 +216,7 @@ public class TdaJsonParser {
   public List<Mover> parseMovers(InputStream in) {
     LOGGER.trace("parsing movers...");
     try (BufferedInputStream bIn = new BufferedInputStream(in)) {
-      TypeReference<List<Mover>> typeReference = new TypeReference<List<Mover>>() {};
-      final List<Mover> movers = DefaultMapper.fromJson(bIn, typeReference);
+      final List<Mover> movers = DefaultMapper.fromJson(bIn, LIST_MOVER_TYPE_REF);
       LOGGER.debug("Returned list of movers of size: {}", movers.size());
       return movers;
     } catch (IOException e) {
@@ -213,8 +228,7 @@ public class TdaJsonParser {
   public OptionChain parseOptionChain(InputStream in) {
     LOGGER.trace("parsing option chain...");
     try (BufferedInputStream bIn = new BufferedInputStream(in)) {
-      TypeReference<OptionChain> typeReference = new TypeReference<OptionChain>() {};
-      final OptionChain optionChain = DefaultMapper.fromJson(bIn, typeReference);
+      final OptionChain optionChain = DefaultMapper.fromJson(bIn, OPTION_CHAIN_TYPE_REF);
       LOGGER.debug("Returned optionChain: {}", optionChain);
       return optionChain;
     } catch (IOException e) {
@@ -226,8 +240,7 @@ public class TdaJsonParser {
   public List<Transaction> parseTransactions(InputStream in) {
     LOGGER.trace("parsing transactions...");
     try (BufferedInputStream bIn = new BufferedInputStream(in)) {
-      TypeReference<List<Transaction>> typeReference = new TypeReference<List<Transaction>>() {};
-      final List<Transaction> transactions = DefaultMapper.fromJson(bIn, typeReference);
+      final List<Transaction> transactions = DefaultMapper.fromJson(bIn, LIST_TRANS_TYPE_REF);
       LOGGER.debug("Returned transactions: {}", transactions);
       return transactions;
     } catch (IOException e) {
@@ -239,8 +252,7 @@ public class TdaJsonParser {
   public Transaction parseTransaction(InputStream in) {
     LOGGER.trace("parsing transaction...");
     try (BufferedInputStream bIn = new BufferedInputStream(in)) {
-      TypeReference<Transaction> typeReference = new TypeReference<Transaction>() {};
-      final Transaction transaction = DefaultMapper.fromJson(bIn, typeReference);
+      final Transaction transaction = DefaultMapper.fromJson(bIn, TRANSACTION_TYPE_REF);
       LOGGER.debug("Returned transaction: {}", transaction);
       return transaction;
     } catch (IOException e) {
@@ -252,8 +264,7 @@ public class TdaJsonParser {
   public Preferences parsePreferences(InputStream in) {
     LOGGER.trace("parsing preferences...");
     try (BufferedInputStream bIn = new BufferedInputStream(in)) {
-      TypeReference<Preferences> typeReference = new TypeReference<Preferences>() {};
-      final Preferences preferences = DefaultMapper.fromJson(bIn, typeReference);
+      final Preferences preferences = DefaultMapper.fromJson(bIn, PREFERENCES_TYPE_REF);
       LOGGER.debug("Returned preferences: {}", preferences);
       return preferences;
     } catch (IOException e) {
@@ -265,8 +276,7 @@ public class TdaJsonParser {
   public UserPrincipals parseUserPrincipals(InputStream in) {
     LOGGER.trace("parsing userPrincipals...");
     try (BufferedInputStream bIn = new BufferedInputStream(in)) {
-      TypeReference<UserPrincipals> typeReference = new TypeReference<UserPrincipals>() {};
-      final UserPrincipals userPrincipals = DefaultMapper.fromJson(bIn, typeReference);
+      final UserPrincipals userPrincipals = DefaultMapper.fromJson(bIn, USER_PRINCIPALS_TYPE_REF);
       LOGGER.debug("Returned userPrincipals: {}", userPrincipals);
       return userPrincipals;
     } catch (IOException e) {
@@ -278,9 +288,8 @@ public class TdaJsonParser {
   public StreamerSubscriptionKeys parseSubscriptionKeys(InputStream in) {
     LOGGER.trace("parsing subscription keys...");
     try (BufferedInputStream bIn = new BufferedInputStream(in)) {
-      TypeReference<StreamerSubscriptionKeys> typeReference = new TypeReference<StreamerSubscriptionKeys>() {};
       final StreamerSubscriptionKeys streamerSubscriptionKeys = DefaultMapper
-          .fromJson(bIn, typeReference);
+          .fromJson(bIn, STREAMER_SUBSCRIPTION_KEYS_TYPE_REF);
       LOGGER.debug("Returned subscription keys: {}", streamerSubscriptionKeys);
       return streamerSubscriptionKeys;
     } catch (IOException e) {
@@ -291,26 +300,20 @@ public class TdaJsonParser {
 
     public List<Hours> parseMarketHours(InputStream in) throws IOException {
       LOGGER.trace("parsing market hours...");
-      try (BufferedInputStream bIn = new BufferedInputStream(in)) {
-
-        List<Hours> hoursList = new ArrayList<>();
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode rootNode = mapper.readTree(bIn);
-        for (Iterator<JsonNode> itype = rootNode.elements(); itype.hasNext(); ) {
-          JsonNode typeNode = itype.next();
-          for (Iterator<JsonNode> icode = typeNode.elements(); icode.hasNext(); ) {
-            JsonNode hoursNode = icode.next();
-            Hours hours = mapper.treeToValue(hoursNode, Hours.class);
-            if(hours != null) {
-              hoursList.add(hours);
-            }
+      List<Hours> hoursList = new ArrayList<>();
+//        ObjectMapper mapper = new ObjectMapper();
+      JsonNode rootNode = DefaultMapper.readTree(in);
+      for (Iterator<JsonNode> itype = rootNode.elements(); itype.hasNext(); ) {
+        JsonNode typeNode = itype.next();
+        for (Iterator<JsonNode> icode = typeNode.elements(); icode.hasNext(); ) {
+          JsonNode hoursNode = icode.next();
+          Hours hours = DefaultMapper.treeToValue(hoursNode, Hours.class);
+          if(hours != null) {
+            hoursList.add(hours);
           }
         }
-        return hoursList;
-      } catch (IOException e) {
-        e.printStackTrace();
-        throw new RuntimeException(e);
       }
+      return hoursList;
     }
 
 //  public <T> T parseTdaJson(InputStream in, Class<T> type){
